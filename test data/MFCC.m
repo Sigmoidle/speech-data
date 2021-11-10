@@ -23,7 +23,7 @@ for i=1:20
     [data, sampleRate] = audioread(filename, "double");
     
     totalSamples = audioinfo(filename).TotalSamples;
-    samplesPerFrame = int16(totalSamples/((totalSamples/sampleRate)*10)); %exactly 10ms worth of samples for 16000hz sample rate
+    samplesPerFrame = int16(totalSamples/((totalSamples/sampleRate)*5)); %exactly 20ms worth of samples for 16000hz sample rate
     hopSize = int16(samplesPerFrame/2);
     numFrames = floor((totalSamples/samplesPerFrame)*2)-2; %-2 because first and last frame don't need to get multiplied
     
@@ -37,7 +37,7 @@ function writeHTKFile(mfccSpectogram, numFrames, hopSize, sampleRate, filename)
 
     %write header
     fwrite(fid, int32(numFrames), "int32");
-    fwrite(fid, 50000, "int32");
+    fwrite(fid, 100000, "int32");
     fwrite(fid, 39*4, "int16");
     fwrite(fid, int16(6+256+512), "int16");
     
@@ -124,14 +124,14 @@ function bands = createMelFrequencyBands(sampleRate, noOfBands)
 end
 
 function sample = hzToSample(hz)
-    sample = round(hz/10);
+    sample = round(hz/5);
 end
 
 %This function uses the mel-scale frequency bands to 
 function melFilterBank = applyMelFilter(data, bands, noOfBands)
     melFilterBank = zeros([1,noOfBands]);
     for band = 2:noOfBands+1
-        filter = zeros([1,800]);
+        filter = zeros([1,1600]);
         middlePoint = hzToSample(bands(band));
         backPoint = hzToSample(bands(band-1))+1;%+1 because matlab starts indexes at 1
         frontPoint = hzToSample(bands(band+1));
