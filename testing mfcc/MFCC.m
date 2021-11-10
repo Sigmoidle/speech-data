@@ -1,13 +1,7 @@
 %Turn .wav to MFCC spectogram
 
 
-names = ["albi","alejandro","alex",...
-       "alexander","aurelie","benjamin",...
-       "brennan", "felipe", "harry",...
-       "hemal", "hugo", "max",...
-       "nathaniel", "owen", "ruaridh",...
-       "ruby", "sarah", "sophie",...
-       "vav", "yan"];
+names = ["alex"];
 
 %the number of mel bands to use, however the number of dct coefficients
 %will still be 13 and there'll be 3 lots of them because we take two
@@ -69,6 +63,7 @@ function mfccSpectogramWithTemporalInformation = processFrames(samplesPerFrame, 
     mfccSpectogramDelta = sgolayfilt(mfccSpectogram,1,9);
     mfccSpectogramDeltaDelta = sgolayfilt(mfccSpectogram,2,9);
     mfccSpectogramWithTemporalInformation = [mfccSpectogram;mfccSpectogramDelta;mfccSpectogramDeltaDelta];
+    mfccSpectogramWithTemporalInformation(isnan(mfccSpectogramWithTemporalInformation)) = 0;
     writeHTKFile(mfccSpectogramWithTemporalInformation, numFrames, hopSize, sampleRate, filename);
 end
 
