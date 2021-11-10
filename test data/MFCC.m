@@ -1,40 +1,50 @@
 %Turn .wav to MFCC spectogram
 
-filename = "alex.wav";
-[data, sampleRate] = audioread(filename, "double");
 
-totalSamples = audioinfo(filename).TotalSamples;
-
-
-samplesPerFrame = totalSamples/((totalSamples/sampleRate)*10); %exactly 10ms worth of samples
-hopSize = samplesPerFrame/2;
-numFrames = floor((totalSamples/samplesPerFrame)*2)-2;
-f = (sampleRate/800:sampleRate/800:sampleRate); %assuming 16000hz
+names = ["albi","alejandro","alex",...
+       "alexander","aurelie","benjamin",...
+       "brennan", "felipe", "harry",...
+       "hemal", "hugo", "max",...
+       "nathaniel", "owen", "ruaridh",...
+       "ruby", "sarah", "sophie",...
+       "vav", "yan"];
 
 melFilterBands = 40;
 
+for i=1:20
+    filename = strcat(names(i),".wav");
+    name = names(i);
+    [data, sampleRate] = audioread(filename, "double");
+    
+    totalSamples = audioinfo(filename).TotalSamples;
+    samplesPerFrame = int16(totalSamples/((totalSamples/sampleRate)*10)); %exactly 10ms worth of samples
+    hopSize = int16(samplesPerFrame/2);
+    numFrames = floor((totalSamples/samplesPerFrame)*2)-2;
+    
+    processFrames(samplesPerFrame, hopSize, numFrames, data, melFilterBands, sampleRate, name)
+end
 
-processFrames(samplesPerFrame, hopSize, numFrames, data, melFilterBands, sampleRate)
 
-
-function writeHTKFile(mfccSpectogram)
-    mfcFileName = "alex.mfc";
+function writeHTKFile(mfccSpectogram, numFrames, hopSize, sampleRate, filename)
+    mfcFileName = strcat(filename, ".mfc");
     fid = fopen(mfcFileName,"w", "ieee-be");
 
     %write header
-    fwrite(fid, 904, "int32");
-    fwrite(fid, 50000, "int32");
+    fwrite(fid, numFrames, "int32");
+    fwrite(fid, hopSize/sampleRate*1000000, "int32");
     fwrite(fid, 39*4, "int16");
     fwrite(fid, 6, "int16");
 
-    for i=1: 904
+    for i=1: numFrames
         for j=1:39
-            fwrite(fid, mfccSpectogram)
 
+            fwrite(fid, mfccSpectogram(j,i), "float32");
+        end
+    end
     fid = fclose(fid);
 end
 
-function mfccSpectogramWithTemporalInformation = processFrames(samplesPerFrame, hopSize, numFrames, data, bands, sampleRate)
+function mfccSpectogramWithTemporalInformation = processFrames(samplesPerFrame, hopSize, numFrames, data, bands, sampleRate, filename)
     mfccSpectogram = zeros(13, numFrames);
     for frameNumber = 1:numFrames
         dataSlice = data((frameNumber)*hopSize-hopSize+1:((frameNumber)*hopSize)+samplesPerFrame-hopSize+1);
@@ -44,8 +54,7 @@ function mfccSpectogramWithTemporalInformation = processFrames(samplesPerFrame, 
     mfccSpectogramDelta = sgolayfilt(mfccSpectogram,1,9);
     mfccSpectogramDeltaDelta = sgolayfilt(mfccSpectogram,2,9);
     mfccSpectogramWithTemporalInformation = [mfccSpectogram;mfccSpectogramDelta;mfccSpectogramDeltaDelta];
-    writeHTKFile(mfccSpectogramWithTemporalInformation);
-
+    writeHTKFile(mfccSpectogramWithTemporalInformation, numFrames, hopSize, sampleRate, filename);
 end
 
 
