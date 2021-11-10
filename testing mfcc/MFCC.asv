@@ -29,10 +29,8 @@ function writeHTKFile(mfccSpectogram)
 
     for i=1: 904
         for j=1:39
+            fwrite(fid, mfccSpectogram)
 
-            fwrite(fid, mfccSpectogram(j,i), "float32");
-        end
-    end
     fid = fclose(fid);
 end
 
