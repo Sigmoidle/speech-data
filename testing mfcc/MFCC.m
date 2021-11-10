@@ -11,7 +11,7 @@ melFilterBands = 40;
 %This for loop iterates over every name in the names list, extracts
 %important and specific information about the .wav file then calls for them
 %to be processed and saved into MFCC spectogram HTK files
-for i=1:20
+for i=1:1
     filename = strcat(names(i),".wav");
     name = names(i);
     [data, sampleRate] = audioread(filename, "double");
@@ -33,7 +33,7 @@ function writeHTKFile(mfccSpectogram, numFrames, hopSize, sampleRate, filename)
     fwrite(fid, int32(numFrames), "int32");
     fwrite(fid, 50000, "int32");
     fwrite(fid, 39*4, "int16");
-    fwrite(fid, 6, "int16");
+    fwrite(fid, int16(6+256+512), "int16");
     
     %write individual lines of data
     for i=1: numFrames
