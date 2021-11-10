@@ -69,6 +69,7 @@ function mfccSpectogramWithTemporalInformation = processFrames(samplesPerFrame, 
     mfccSpectogramDelta = sgolayfilt(mfccSpectogram,1,9);
     mfccSpectogramDeltaDelta = sgolayfilt(mfccSpectogram,2,9);
     mfccSpectogramWithTemporalInformation = [mfccSpectogram;mfccSpectogramDelta;mfccSpectogramDeltaDelta];
+    mfccSpectogramWithTemporalInformation(isnan(mfccSpectogramWithTemporalInformation)) = 0;
     writeHTKFile(mfccSpectogramWithTemporalInformation, numFrames, hopSize, sampleRate, filename);
 end
 
