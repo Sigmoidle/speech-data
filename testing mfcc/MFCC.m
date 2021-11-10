@@ -36,8 +36,8 @@ function writeHTKFile(mfccSpectogram, numFrames, hopSize, sampleRate, filename)
     fid = fopen(mfcFileName,"w", "ieee-be");
 
     %write header
-    fwrite(fid, numFrames, "int32");
-    fwrite(fid, hopSize/sampleRate*1000000, "int32");
+    fwrite(fid, int32(numFrames), "int32");
+    fwrite(fid, int32(hopSize/sampleRate*1000000), "int32");
     fwrite(fid, 39*4, "int16");
     fwrite(fid, 6, "int16");
     
@@ -127,12 +127,13 @@ function sample = hzToSample(hz)
     sample = round(hz/10);
 end
 
+%This function uses the mel-scale frequency bands to 
 function melFilterBank = applyMelFilter(data, bands, noOfBands)
     melFilterBank = zeros([1,noOfBands]);
     for band = 2:noOfBands+1
         filter = zeros([1,800]);
         middlePoint = hzToSample(bands(band));
-        backPoint = hzToSample(bands(band-1))+1;%+1 because matlab weird
+        backPoint = hzToSample(bands(band-1))+1;%+1 because matlab starts indexes at 1
         frontPoint = hzToSample(bands(band+1));
         filter(backPoint:middlePoint) = linspace(0, 1, middlePoint-backPoint+1);
         filter(middlePoint:frontPoint) = linspace(1, 0, frontPoint-middlePoint+1);
