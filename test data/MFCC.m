@@ -66,6 +66,9 @@ function mfccSpectogramWithTemporalInformation = processFrames(samplesPerFrame, 
         mfcc = makeMFCC(dataSlice, samplesPerFrame, bands, sampleRate);
         mfccSpectogram(:,frameNumber)=mfcc';
     end
+    %Apply a sgolayfilter to the MFCC spectogram to get delta and delta
+    %delta information from the data. This is then augimented onto the
+    %original MFCC spectogram
     mfccSpectogramDelta = sgolayfilt(mfccSpectogram,1,9);
     mfccSpectogramDeltaDelta = sgolayfilt(mfccSpectogram,2,9);
     mfccSpectogramWithTemporalInformation = [mfccSpectogram;mfccSpectogramDelta;mfccSpectogramDeltaDelta];
@@ -84,10 +87,13 @@ function mfcc = makeMFCC(data, samples, bands, sampleRate)
     magDB = mag2db(mag);
     %4th run the magnitude vectors though the mel-filterbank
     filterBands = createMelFrequencyBands(sampleRate, bands);
-    melFilterBank = applyMelFilter(magDB, filterBands, bands);
-    %5th perform dct on mel filter bank
+    melFilterBank = applyMelFilter(magDB, filterBands, bands, samples);
+    %5th perform dct on mel filter bank, this is to make useful information
+    %about tembra etc very pronounced and less useful information like
+    %volume not appear in the data.
     dctOut = applyDCT(melFilterBank);
-    %6th truncate
+    %6th truncate (remove the first co-efficient and take the next 13
+    %co-efficiencts)
     mfcc = truncate(dctOut);
 end
 
@@ -123,18 +129,19 @@ function bands = createMelFrequencyBands(sampleRate, noOfBands)
     bands = frequencyBands;
 end
 
-function sample = hzToSample(hz)
-    sample = round(hz/5);
+function sample = hzToSample(hz, samples)
+    sample = round(hz/(8000/(samples/2)));
 end
 
-%This function uses the mel-scale frequency bands to 
-function melFilterBank = applyMelFilter(data, bands, noOfBands)
+%This function uses the mel-scale frequency bands to create multiple
+%mel-scaled filter banks (triangular overlapping). 
+function melFilterBank = applyMelFilter(data, bands, noOfBands, samples)
     melFilterBank = zeros([1,noOfBands]);
     for band = 2:noOfBands+1
-        filter = zeros([1,1600]);
-        middlePoint = hzToSample(bands(band));
-        backPoint = hzToSample(bands(band-1))+1;%+1 because matlab starts indexes at 1
-        frontPoint = hzToSample(bands(band+1));
+        filter = zeros([1,samples/2]);
+        middlePoint = hzToSample(bands(band), samples);
+        backPoint = hzToSample(bands(band-1), samples)+1;%+1 because matlab starts indexes at 1
+        frontPoint = hzToSample(bands(band+1), samples);
         filter(backPoint:middlePoint) = linspace(0, 1, middlePoint-backPoint+1);
         filter(middlePoint:frontPoint) = linspace(1, 0, frontPoint-middlePoint+1);
         melFilterBank(band-1) = sum(data.*filter, "all");
