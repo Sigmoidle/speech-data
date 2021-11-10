@@ -37,14 +37,13 @@ function writeHTKFile(mfccSpectogram, numFrames, hopSize, sampleRate, filename)
 
     %write header
     fwrite(fid, int32(numFrames), "int32");
-    fwrite(fid, int32(hopSize/sampleRate*1000000), "int32");
+    fwrite(fid, 50000, "int32");
     fwrite(fid, 39*4, "int16");
     fwrite(fid, 6, "int16");
     
     %write individual lines of data
     for i=1: numFrames
         for j=1:39
-
             fwrite(fid, mfccSpectogram(j,i), "float32");
         end
     end
