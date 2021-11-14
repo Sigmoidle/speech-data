@@ -1,0 +1,3 @@
+fixed all training data .wav files.
+
+Made.lab file for: albi, alejandro, alex, alexander, aurelie, benjamin, brennan, felipe, harry, hemal, hugo, max, nathaniel, owen, ruaridh, ruby, sarah, sophie, vav, 
