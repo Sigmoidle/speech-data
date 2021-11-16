@@ -13,6 +13,7 @@ names = ["albi","alejandro","alex",...
 %will still be 13 and there'll be 3 lots of them because we take two
 %delters of first and second order to augiment the MFCC spectogram with
 melFilterBands = 40;
+frameSize = 20;
 
 %This for loop iterates over every name in the names list, extracts
 %important and specific information about the .wav file then calls for them
@@ -24,8 +25,8 @@ for i=1:20
     
     totalSamples = audioinfo(filename).TotalSamples;
     samplesPerFrame = int16(totalSamples/((totalSamples/sampleRate)*5)); %exactly 20ms worth of samples for 16000hz sample rate
-    hopSize = int16(samplesPerFrame/2);
-    numFrames = floor((totalSamples/samplesPerFrame)*2)-2; %-2 because first and last frame don't need to get multiplied
+    hopSize = 10;
+    numFrames = floor((totalSamples/sampleRate*1000)/frameSize)-2;
     
     processFrames(samplesPerFrame, hopSize, numFrames, data, melFilterBands, sampleRate, name)
 end

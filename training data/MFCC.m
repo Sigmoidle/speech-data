@@ -26,7 +26,7 @@ for i=1:20
     totalSamples = audioinfo(filename).TotalSamples;
     samplesPerFrame = int16(totalSamples/((totalSamples/sampleRate)*5)); %exactly 20ms worth of samples for 16000hz sample rate
     hopSize = 10;
-    numFrames = floor((totalSamples/sampleRate*1000)/frameSize)-2; %-2 because first and last frame don't need to get multiplied
+    numFrames = floor((totalSamples/sampleRate*1000)/frameSize)-2;
     
     processFrames(samplesPerFrame, hopSize, numFrames, data, melFilterBands, sampleRate, name)
 end
