@@ -1,20 +1,20 @@
-albi.mfc
-alejandro.mfc
-alexander.mfc
-alex.mfc
-aurelie.mfc
-benjamin.mfc
-brennan.mfc
-felipe.mfc
-harry.mfc
-hemal.mfc
-hugo.mfc
-max.mfc
-nathaniel.mfc
-owen.mfc
-ruaridh.mfc
-ruby.mfc
-sarah.mfc
-sophie.mfc
-vav.mfc
-yan.mfc
+'test data/albi.mfc'
+'test data/alejandro.mfc'
+'test data/alexander.mfc'
+'test data/alex.mfc'
+'test data/aurelie.mfc'
+'test data/benjamin.mfc'
+'test data/brennan.mfc'
+'test data/felipe.mfc'
+'test data/harry.mfc'
+'test data/hemal.mfc'
+'test data/hugo.mfc'
+'test data/max.mfc'
+'test data/nathaniel.mfc'
+'test data/owen.mfc'
+'test data/ruaridh.mfc'
+'test data/ruby.mfc'
+'test data/sarah.mfc'
+'test data/sophie.mfc'
+'test data/vav.mfc'
+'test data/yan.mfc'
